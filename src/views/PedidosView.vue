@@ -1,6 +1,6 @@
 <script setup>
   // O aluno deverá implementar a lógica do componente.
-  // import { pedidos } from '@/data/pedidos'
+  import { pedidos } from '@/data/pedidos'
 </script>
 
 <template>
@@ -83,6 +83,15 @@
           </thead>
 
           <tbody>
+
+            <tr>
+              <td>{{ pedidos[0].codigo }}</td>
+              <td>{{ pedidos[0].cliente }}</td>
+              <td>{{ pedidos[0].itens[0].quantidade }}</td>
+              <td>{{ pedidos[0].itens[0].produto }}</td>
+              <td>{{ pedidos[0].itens[0].precoUnitario }}</td>
+            </tr>
+
            <!--
               Exemplo da estrutura que deverá ser repetida pelo aluno:
 
