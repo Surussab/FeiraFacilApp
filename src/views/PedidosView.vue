@@ -40,7 +40,6 @@ const totalVendido = computed(() => {
 })
 
 function filtrar() {
-  // O filtro já é atualizado automaticamente pelo computed
 }
 </script>
 
@@ -107,7 +106,6 @@ function filtrar() {
     <section class="card" aria-labelledby="pedidos-realizados">
       <h2 id="pedidos-realizados">Pedidos realizados</h2>
 
-      <!-- Aparece quando não existe nenhum pedido -->
       <p v-if="pedidosFiltrados.length === 0">
         Nenhum pedido encontrado.
       </p>

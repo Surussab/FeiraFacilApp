@@ -2,22 +2,17 @@
 import { ref, computed } from 'vue'
 import { pedidos } from '@/data/pedidos'
 
-// Dados do pedido
 const codigoPedido = ref('')
 const nomeCliente = ref('')
 
-// Dados do produto
 const nomeProduto = ref('')
 const precoUnitario = ref(0)
 const quantidade = ref(1)
 
-// Lista de produtos do pedido atual
 const itens = ref([])
 
-// Mensagem de erro
 const mensagem = ref('')
 
-// Adicionar produto
 function adicionarProduto() {
   mensagem.value = ''
 
@@ -37,18 +32,15 @@ function adicionarProduto() {
     quantidade: Number(quantidade.value),
   })
 
-  // Limpa os campos do produto
   nomeProduto.value = ''
   precoUnitario.value = 0
   quantidade.value = 1
 }
 
-// Excluir produto
 function excluirProduto(id) {
   itens.value = itens.value.filter((item) => item.id !== id)
 }
 
-// Total da compra
 const totalCompra = computed(() => {
   return itens.value.reduce((total, item) => {
     return total + item.precoUnitario * item.quantidade
@@ -66,7 +58,6 @@ function limpar() {
   mensagem.value = ''
 }
 
-// Finalizar pedido
 function finalizarPedido() {
   mensagem.value = ''
 
@@ -88,7 +79,6 @@ function finalizarPedido() {
 
   mensagem.value = 'Pedido finalizado com sucesso!'
 
-  // Limpa os dados depois de finalizar
   codigoPedido.value = ''
   nomeCliente.value = ''
   itens.value = []
