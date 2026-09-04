@@ -1,6 +1,47 @@
 <script setup>
-  // O aluno deverá implementar a lógica do componente.
-  import { pedidos } from '@/data/pedidos'
+import { ref, computed } from 'vue'
+import { pedidos } from '@/data/pedidos'
+
+const filtro = ref('')
+
+const pedidosFiltrados = computed(() => {
+  if (filtro.value === '') {
+    return pedidos.value
+  }
+
+  return pedidos.value.filter((pedido) => {
+    return (
+      pedido.codigo.toLowerCase().includes(filtro.value.toLowerCase()) ||
+      pedido.cliente.toLowerCase().includes(filtro.value.toLowerCase())
+    )
+  })
+})
+
+const totalItens = computed(() => {
+  return pedidos.value.reduce((total, pedido) => {
+    return (
+      total +
+      pedido.itens.reduce((soma, item) => {
+        return soma + item.quantidade
+      }, 0)
+    )
+  }, 0)
+})
+
+const totalVendido = computed(() => {
+  return pedidos.value.reduce((total, pedido) => {
+    return (
+      total +
+      pedido.itens.reduce((soma, item) => {
+        return soma + item.precoUnitario * item.quantidade
+      }, 0)
+    )
+  }, 0)
+})
+
+function filtrar() {
+  // O filtro já é atualizado automaticamente pelo computed
+}
 </script>
 
 <template>
@@ -19,22 +60,19 @@
       <article class="summary-card">
         <span>Pedidos realizados</span>
 
-        <!-- O aluno deverá calcular este valor. -->
-        <strong>0</strong>
+        <strong>{{ pedidos.length }}</strong>
       </article>
 
       <article class="summary-card">
         <span>Itens vendidos</span>
 
-        <!-- O aluno deverá calcular este valor. -->
-        <strong>0</strong>
+        <strong>{{ totalItens }}</strong>
       </article>
 
       <article class="summary-card">
         <span>Total vendido</span>
 
-        <!-- O aluno deverá calcular este valor. -->
-        <strong>R$ 0,00</strong>
+        <strong>R$ {{ totalVendido.toFixed(2).replace('.', ',') }}</strong>
       </article>
     </section>
 
@@ -52,10 +90,15 @@
             name="filtro"
             type="search"
             placeholder="Digite o cliente ou código"
+            v-model="filtro"
           />
         </div>
 
-        <button class="button button-primary" type="button">
+        <button
+          class="button button-primary"
+          type="button"
+          @click="filtrar"
+        >
           Filtrar
         </button>
       </div>
@@ -64,13 +107,15 @@
     <section class="card" aria-labelledby="pedidos-realizados">
       <h2 id="pedidos-realizados">Pedidos realizados</h2>
 
-      <!--
-        O aluno deverá utilizar uma diretiva condicional para
-        apresentar uma mensagem na tela quando nenhum pedido for encontrado.
-      -->
+      <!-- Aparece quando não existe nenhum pedido -->
+      <p v-if="pedidosFiltrados.length === 0">
+        Nenhum pedido encontrado.
+      </p>
 
-      <!-- Exiba aqui uma mensagem quando nenhum pedido for encontrado -->
-      <div class="table-responsive">
+      <div
+        v-else
+        class="table-responsive"
+      >
         <table>
           <thead>
             <tr>
@@ -83,26 +128,39 @@
           </thead>
 
           <tbody>
+            <tr
+              v-for="pedido in pedidosFiltrados"
+              :key="pedido.codigo"
+            >
+              <td>{{ pedido.codigo }}</td>
 
-            <tr>
-              <td>{{ pedidos[0].codigo }}</td>
-              <td>{{ pedidos[0].cliente }}</td>
-              <td>{{ pedidos[0].itens[0].quantidade }}</td>
-              <td>{{ pedidos[0].itens[0].produto }}</td>
-              <td>{{ pedidos[0].itens[0].precoUnitario }}</td>
+              <td>{{ pedido.cliente }}</td>
+
+              <td>{{ pedido.itens.length }}</td>
+
+              <td>
+                {{
+                  pedido.itens.reduce(
+                    (total, item) => total + item.quantidade,
+                    0
+                  )
+                }}
+              </td>
+
+              <td>
+                R$
+                {{
+                  pedido.itens
+                    .reduce(
+                      (total, item) =>
+                        total + item.precoUnitario * item.quantidade,
+                      0
+                    )
+                    .toFixed(2)
+                    .replace('.', ',')
+                }}
+              </td>
             </tr>
-
-           <!--
-              Exemplo da estrutura que deverá ser repetida pelo aluno:
-
-              <tr>
-                <td>Código do pedido</td>
-                <td>Nome do cliente</td>
-                <td>Quantidade de produtos diferentes</td>
-                <td>Quantidade total de itens</td>
-                <td>Valor total do pedido</td>
-              </tr>
-            -->
           </tbody>
         </table>
       </div>
